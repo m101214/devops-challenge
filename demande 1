@@ -1,0 +1,128 @@
+Pour créer un Burndown Chart en React JS qui affiche la performance de réalisation de projet basée sur les données d'OpenProject, vous devrez suivre plusieurs étapes, incluant la récupération des données via l'API d'OpenProject, la conception de votre application React, et la création du graphique lui-même. Voici un guide étape par étape pour réaliser ce projet.
+
+### Étape 1: Configurer l'environnement React
+
+Assurez-vous d'avoir Node.js installé sur votre système. Ensuite, créez une nouvelle application React:
+
+```bash
+npx create-react-app mon-burndown-chart
+cd mon-burndown-chart
+```
+
+### Étape 2: Installer les dépendances
+
+Vous aurez besoin d'Axios pour les requêtes HTTP et d'une librairie de graphiques comme recharts.
+
+```bash
+npm install axios recharts
+```
+
+### Étape 3: Obtenir un Token d'API d'OpenProject
+
+1. Connectez-vous à votre compte OpenProject.
+2. Allez dans vos paramètres de compte et générez un token d'accès API.
+
+### Étape 4: Créer un service pour interagir avec l'API d'OpenProject
+
+Dans votre application React, créez un fichier `OpenProjectService.js` dans le répertoire `src` pour encapsuler les appels API.
+
+```javascript
+import axios from 'axios';
+
+const API_URL = 'https://votre.instance.openproject.com/api/v3';
+const TOKEN = 'votre_token';
+
+export const getTasks = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/projects/votre_project_id/work_packages`, {
+      headers: { 'Authorization': `Bearer ${TOKEN}` }
+    });
+    return response.data._embedded.elements;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des tâches", error);
+    return [];
+  }
+};
+```
+
+### Étape 5: Créer le composant Burndown Chart
+
+Créez un composant React `BurndownChart.js` qui utilisera recharts pour dessiner le graphique.
+
+```javascript
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { getTasks } from './OpenProjectService';
+
+const BurndownChart = () => {
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const fetchedTasks = await getTasks();
+      setTasks(fetchedTasks);
+    };
+
+    fetchTasks();
+  }, []);
+
+  // Convertir les tâches en données pour le graphique
+  // Vous devrez adapter cette logique en fonction de la structure de vos tâches et calculer les valeurs idéales et réelles
+
+  const data = []; // Remplissez avec les données transformées
+
+  return (
+    <LineChart width={600} height={300} data={data}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line type="monotone" dataKey="ideal" stroke="#8884d8" />
+      <Line type="monotone" dataKey="real" stroke="#82ca9d" />
+    </LineChart>
+  );
+};
+
+export default BurndownChart;
+```
+
+### Étape 6: Intégrer le Burndown Chart dans votre application
+
+Modifiez `App.js` pour inclure votre nouveau composant `BurndownChart`.
+
+```javascript
+import React from 'react';
+import './App.css';
+import BurndownChart from './BurndownChart';
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <BurndownChart />
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### Étape 7: Lancer l'application
+
+Exécutez votre application et ajustez en fonction de vos besoins.
+
+```bash
+npm start
+```
+
+### Notes finales
+
+- **Conversion des tâches en données de graphique :** Vous devrez transformer les données de tâches d'OpenProject en un format compatible avec votre graphique, en calculant les valeurs idéales et réelles basées sur les dates de début, de fin, et le pourcentage de progression.
+- **Authentification et Sécurité :** Faites attention à la gestion de votre token d'API pour ne pas l'exposer inutilement.
+- **Personnalisation :** Ce guide propose un
+
+ point de départ. Vous aurez probablement besoin d'ajuster le code, notamment pour le traitement des données et la personnalisation du graphique.
+
+En suivant ces étapes, vous devriez être en mesure de créer un Burndown Chart en React JS qui visualise les performances de réalisation de votre projet sur OpenProject.
