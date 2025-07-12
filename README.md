@@ -34,8 +34,12 @@ flowchart TD
 
 ---
 
-## 🔄 CI/CD Pipeline Overview
 
+---
+
+### ✅ CI/CD Pipeline Diagram (corrigé)
+
+```markdown
 ```mermaid
 graph TD
     A[Code Commit] --> B[CI Trigger]
@@ -43,8 +47,9 @@ graph TD
     C --> D[Build Docker Image]
     D --> E[Push Image to Artifactory]
     E --> F[Deploy Container on OVH]
-    F --> G[Run AI API (Gunicorn)]
+    F --> G[Run AI API via Gunicorn]
 ```
+
 
 ---
 
